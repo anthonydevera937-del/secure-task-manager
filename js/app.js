@@ -34,7 +34,7 @@ function createTaskElement(taskText, taskId) {
 
     const span = document.createElement('span');
     span.className = 'task-text';
-    span.textContent = taskText; // Safe XSS protection[cite: 2]
+    span.textContent = taskText;
 
     const completeBtn = document.createElement('button');
     completeBtn.className = 'complete-btn';
@@ -56,7 +56,7 @@ function createTaskElement(taskText, taskId) {
     return li;
 }
 
-// Required: addTask(taskText)[cite: 2]
+// Required: addTask(taskText)
 function addTask(taskText) {
     const taskInput = document.getElementById('taskInput');
     const taskMessage = document.getElementById('taskMessage');
@@ -79,7 +79,7 @@ function addTask(taskText) {
     updateTaskCounts();
 }
 
-// Required: toggleTaskComplete(taskItem)[cite: 2]
+// Required: toggleTaskComplete(taskItem)
 function toggleTaskComplete(taskItem) {
     const isCompleted = taskItem.dataset.state === 'completed';
     if (isCompleted) {
@@ -92,7 +92,7 @@ function toggleTaskComplete(taskItem) {
     updateTaskCounts();
 }
 
-// Required: beginTaskEdit(taskItem)[cite: 2]
+// Required: beginTaskEdit(taskItem)
 function beginTaskEdit(taskItem) {
     const span = taskItem.querySelector('.task-text');
     const editBtn = taskItem.querySelector('.edit-btn');
@@ -109,7 +109,7 @@ function beginTaskEdit(taskItem) {
     if (editBtn) editBtn.textContent = 'Save';
 }
 
-// Required: saveTaskEdit(taskItem)[cite: 2]
+// Required: saveTaskEdit(taskItem)
 function saveTaskEdit(taskItem) {
     const input = taskItem.querySelector('.edit-input');
     const editBtn = taskItem.querySelector('.edit-btn');
@@ -125,19 +125,19 @@ function saveTaskEdit(taskItem) {
     if (taskMessage) taskMessage.textContent = '';
     const span = document.createElement('span');
     span.className = 'task-text';
-    span.textContent = trimmedText; // Safe XSS protection[cite: 2]
+    span.textContent = trimmedText;
 
     input.replaceWith(span);
     if (editBtn) editBtn.textContent = 'Edit';
 }
 
-// Required: removeTask(taskItem)[cite: 2]
+// Required: removeTask(taskItem)
 function removeTask(taskItem) {
     taskItem.remove();
     updateTaskCounts();
 }
 
-// Required: handleTaskListClick(event) - Event Delegation[cite: 2]
+// Required: handleTaskListClick(event) - Event Delegation
 function handleTaskListClick(event) {
     const target = event.target;
     const taskItem = target.closest('.task-item');
@@ -156,7 +156,7 @@ function handleTaskListClick(event) {
     }
 }
 
-// Required: loadSampleTasks() using DocumentFragment[cite: 2]
+// Required: loadSampleTasks() using DocumentFragment
 function loadSampleTasks() {
     const taskList = document.getElementById('taskList');
     const taskMessage = document.getElementById('taskMessage');

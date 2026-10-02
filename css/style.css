@@ -99,6 +99,7 @@ ul#taskList {
     gap: 10px;
 }
 
+.task-item.completed .task-text,
 .task-item[data-state="completed"] .task-text {
     text-decoration: line-through;
     color: #6c757d;
