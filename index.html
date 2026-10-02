@@ -10,17 +10,15 @@
     <div class="container">
         <h1>Secure Dynamic Task Manager</h1>
 
-        <!-- Task Input Section -->
+        <!-- Task Input Controls -->
         <div class="input-section">
             <input type="text" id="taskInput" placeholder="Enter a task">
             <button id="addTaskBtn">Add Task</button>
             <button id="loadSamplesBtn">Load Sample Tasks</button>
         </div>
+        <div id="taskMessage" class="validation-message"></div>
 
-        <!-- Validation Message -->
-        <div id="taskMessage" class="error-message"></div>
-
-        <!-- Summary Section -->
+        <!-- Summary Counts -->
         <div class="summary-section">
             <p>Total Tasks: <span id="totalCount">0</span></p>
             <p>Pending: <span id="pendingCount">0</span></p>

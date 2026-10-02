@@ -1,195 +1,201 @@
-// Kunin ang mga elemento mula sa HTML gamit ang kanilang ID
-const taskInput = document.getElementById('taskInput');
-const addTaskBtn = document.getElementById('addTaskBtn');
-const loadSamplesBtn = document.getElementById('loadSamplesBtn');
-const taskList = document.getElementById('taskList');
-const taskMessage = document.getElementById('taskMessage');
-const totalCount = document.getElementById('totalCount');
-const pendingCount = document.getElementById('pendingCount');
-const completedCount = document.getElementById('completedCount');
-
-let taskIdCounter = 1;
-
-// Function para gumawa ng task element gamit ang createElement at textContent para ligtas sa XSS
-function createTaskElement(taskText, taskId) {
-    const li = document.createElement('li');
-    li.className = 'task-item';
-    li.dataset.taskId = taskId;
-    li.dataset.state = 'pending';
-
-    const span = document.createElement('span');
-    span.className = 'task-text';
-    span.textContent = taskText; // Pinipigilan ang XSS attacks
-
-    const completeBtn = document.createElement('button');
-    completeBtn.className = 'complete-btn';
-    completeBtn.textContent = 'Complete';
-
-    const editBtn = document.createElement('button');
-    editBtn.className = 'edit-btn';
-    editBtn.textContent = 'Edit';
-
-    const removeBtn = document.createElement('button');
-    removeBtn.className = 'remove-btn';
-    removeBtn.textContent = 'Remove';
-
-    // Pagdugtong-dugtungin ang mga elemento sa loob ng li
-    li.appendChild(span);
-    li.appendChild(completeBtn);
-    li.appendChild(editBtn);
-    li.appendChild(removeBtn);
-
-    return li;
-}
-
-// Function para magdagdag ng bagong task na may validation sa blank input
-function addTask(text) {
-    const trimmedText = text.trim();
-    if (!trimmedText) {
-        taskMessage.textContent = 'Task cannot be empty';
-        return;
-    }
-
-    taskMessage.textContent = '';
-    const taskId = `task-${taskIdCounter++}`;
-    const taskItem = createTaskElement(trimmedText, taskId);
-
-    taskList.appendChild(taskItem);
-    taskInput.value = '';
-    updateTaskCounts();
-}
-
-// Function para i-toggle ang estado ng task kung tapos na o hindi pa
-function toggleTaskComplete(taskItem) {
-    const isCompleted = taskItem.classList.toggle('completed');
-    taskItem.dataset.state = isCompleted ? 'completed' : 'pending';
+document.addEventListener('DOMContentLoaded', () => {
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const loadSamplesBtn = document.getElementById('loadSamplesBtn');
+    const taskList = document.getElementById('taskList');
+    const taskMessage = document.getElementById('taskMessage');
     
-    const completeBtn = taskItem.querySelector('.complete-btn');
-    if (completeBtn) {
-        completeBtn.textContent = isCompleted ? 'Undo' : 'Complete';
-    }
-    
-    updateTaskCounts();
-}
+    const totalCount = document.getElementById('totalCount');
+    const pendingCount = document.getElementById('pendingCount');
+    const completedCount = document.getElementById('completedCount');
 
-// Function para simulan ang pag-edit ng task
-function beginTaskEdit(taskItem) {
-    const span = taskItem.querySelector('.task-text');
-    const editBtn = taskItem.querySelector('.edit-btn');
-    if (!span) return;
+    let taskCounter = 0;
 
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'edit-input';
-    input.value = span.textContent;
+    // Helper: Update Task Counts from Current DOM state
+    function updateTaskCounts() {
+        const tasks = taskList.querySelectorAll('.task-item');
+        const total = tasks.length;
+        let completed = 0;
 
-    span.replaceWith(input);
-    input.focus();
-    editBtn.textContent = 'Save';
-}
+        tasks.forEach(task => {
+            if (task.dataset.state === 'completed') {
+                completed++;
+            }
+        });
 
-// Function para i-save ang binagong task na may validation
-function saveTaskEdit(taskItem) {
-    const input = taskItem.querySelector('.edit-input');
-    const editBtn = taskItem.querySelector('.edit-btn');
-    if (!input) return;
+        const pending = total - completed;
 
-    const trimmedText = input.value.trim();
-    if (!trimmedText) {
-        taskMessage.textContent = 'Task cannot be empty';
-        return;
+        totalCount.textContent = total;
+        pendingCount.textContent = pending;
+        completedCount.textContent = completed;
     }
 
-    taskMessage.textContent = '';
-    const span = document.createElement('span');
-    span.className = 'task-text';
-    span.textContent = trimmedText;
+    // Required: createTaskElement(taskText, taskId)
+    function createTaskElement(taskText, taskId) {
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        li.dataset.taskId = taskId;
+        li.dataset.state = 'pending';
 
-    input.replaceWith(span);
-    editBtn.textContent = 'Edit';
-}
+        const span = document.createElement('span');
+        span.className = 'task-text';
+        span.textContent = taskText; // Safe XSS protection
 
-// Function para mag-delete ng task
-function removeTask(taskItem) {
-    taskItem.remove();
-    updateTaskCounts();
-}
+        const completeBtn = document.createElement('button');
+        completeBtn.className = 'complete-btn';
+        completeBtn.textContent = 'Complete';
 
-// Function para i-update ang mga counter sa summary section
-function updateTaskCounts() {
-    const tasks = taskList.querySelectorAll('.task-item');
-    let total = tasks.length;
-    let completed = 0;
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = 'Edit';
 
-    tasks.forEach(task => {
-        if (task.dataset.state === 'completed') {
-            completed++;
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn';
+        removeBtn.textContent = 'Remove';
+
+        li.appendChild(span);
+        li.appendChild(completeBtn);
+        li.appendChild(editBtn);
+        li.appendChild(removeBtn);
+
+        return li;
+    }
+
+    // Required: addTask(taskText)
+    function addTask(taskText) {
+        const trimmedText = taskText.trim();
+        if (!trimmedText) {
+            taskMessage.textContent = 'Task cannot be empty';
+            return;
         }
-    });
 
-    let pending = total - completed;
+        taskMessage.textContent = '';
+        taskCounter++;
+        const taskId = `task-${taskCounter}`;
 
-    totalCount.textContent = total;
-    pendingCount.textContent = pending;
-    completedCount.textContent = completed;
-}
+        const taskItem = createTaskElement(trimmedText, taskId);
+        taskList.appendChild(taskItem);
 
-// Event Delegation para sa mga pindutan sa task list
-function handleTaskListClick(event) {
-    const target = event.target;
-    const taskItem = target.closest('.task-item');
-    if (!taskItem) return;
-
-    if (target.matches('.complete-btn')) {
-        toggleTaskComplete(taskItem);
-    } else if (target.matches('.edit-btn')) {
-        if (target.textContent === 'Edit') {
-            beginTaskEdit(taskItem);
-        } else if (target.textContent === 'Save') {
-            saveTaskEdit(taskItem);
-        }
-    } else if (target.matches('.remove-btn')) {
-        removeTask(taskItem);
+        taskInput.value = '';
+        updateTaskCounts();
     }
-}
 
-// Function para mag-load ng sample tasks gamit ang DocumentFragment para sa performance
-function loadSampleTasks() {
-    const sampleTexts = [
-        'Review DOM selectors',
-        'Practice createElement',
-        'Study event delegation'
-    ];
+    // Required: toggleTaskComplete(taskItem)
+    function toggleTaskComplete(taskItem) {
+        const isCompleted = taskItem.dataset.state === 'completed';
+        if (isCompleted) {
+            taskItem.dataset.state = 'pending';
+            taskItem.classList.remove('completed');
+        } else {
+            taskItem.dataset.state = 'completed';
+            taskItem.classList.add('completed');
+        }
+        updateTaskCounts();
+    }
 
-    const fragment = document.createDocumentFragment();
+    // Required: beginTaskEdit(taskItem)
+    function beginTaskEdit(taskItem) {
+        const span = taskItem.querySelector('.task-text');
+        const editBtn = taskItem.querySelector('.edit-btn');
+        if (!span) return;
 
-    sampleTexts.forEach(text => {
-        const taskId = `task-${taskIdCounter++}`;
-        const taskItem = createTaskElement(text, taskId);
-        fragment.appendChild(taskItem);
-    });
+        const currentText = span.textContent;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'edit-input';
+        input.value = currentText;
 
-    taskList.appendChild(fragment);
-    updateTaskCounts();
-}
+        span.replaceWith(input);
+        input.focus();
+        editBtn.textContent = 'Save';
+    }
 
-// Pagkabit ng mga Event Listeners sa mga main buttons at inputs
-addTaskBtn.addEventListener('click', () => {
-    addTask(taskInput.value);
-});
+    // Required: saveTaskEdit(taskItem)
+    function saveTaskEdit(taskItem) {
+        const input = taskItem.querySelector('.edit-input');
+        const editBtn = taskItem.querySelector('.edit-btn');
+        if (!input) return;
 
-taskInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
+        const trimmedText = input.value.trim();
+        if (!trimmedText) {
+            taskMessage.textContent = 'Task cannot be empty';
+            return;
+        }
+
+        taskMessage.textContent = '';
+        const span = document.createElement('span');
+        span.className = 'task-text';
+        span.textContent = trimmedText; // Safe XSS protection
+
+        input.replaceWith(span);
+        editBtn.textContent = 'Edit';
+    }
+
+    // Required: removeTask(taskItem)
+    function removeTask(taskItem) {
+        taskItem.remove();
+        updateTaskCounts();
+    }
+
+    // Required: handleTaskListClick(event) - Event Delegation
+    function handleTaskListClick(event) {
+        const target = event.target;
+        const taskItem = target.closest('.task-item');
+        if (!taskItem) return;
+
+        if (target.matches('.complete-btn')) {
+            toggleTaskComplete(taskItem);
+        } else if (target.matches('.edit-btn')) {
+            if (target.textContent === 'Edit') {
+                beginTaskEdit(taskItem);
+            } else if (target.textContent === 'Save') {
+                saveTaskEdit(taskItem);
+            }
+        } else if (target.matches('.remove-btn')) {
+            removeTask(taskItem);
+        }
+    }
+
+    // Required: loadSampleTasks() using DocumentFragment
+    function loadSampleTasks() {
+        const samples = [
+            "Review DOM selectors",
+            "Practice createElement",
+            "Study event delegation"
+        ];
+
+        const fragment = document.createDocumentFragment();
+
+        samples.forEach(sampleText => {
+            taskCounter++;
+            const taskId = `task-${taskCounter}`;
+            const taskItem = createTaskElement(sampleText, taskId);
+            fragment.appendChild(taskItem);
+        });
+
+        taskList.appendChild(fragment);
+        taskMessage.textContent = '';
+        updateTaskCounts();
+    }
+
+    // Event Listeners
+    addTaskBtn.addEventListener('click', () => {
         addTask(taskInput.value);
-    }
+    });
+
+    taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            addTask(taskInput.value);
+        }
+    });
+
+    loadSamplesBtn.addEventListener('click', () => {
+        loadSampleTasks();
+    });
+
+    // Exactly one delegated click listener on #taskList
+    taskList.addEventListener('click', handleTaskListClick);
+
+    // Initial State Check
+    updateTaskCounts();
 });
-
-loadSamplesBtn.addEventListener('click', () => {
-    loadSampleTasks();
-});
-
-// Isang delegated listener para sa buong taskList
-taskList.addEventListener('click', handleTaskListClick);
-
-// Paunang tawag sa count updater pag-load ng pahina
-updateTaskCounts();
