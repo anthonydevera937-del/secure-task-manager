@@ -19,7 +19,7 @@ function createTaskElement(taskText, taskId) {
 
     const span = document.createElement('span');
     span.className = 'task-text';
-    span.textContent = taskText; // Safe injection prevention
+    span.textContent = taskText; // Safe DOM API to prevent injection
 
     const completeBtn = document.createElement('button');
     completeBtn.className = 'complete-btn';
@@ -49,7 +49,7 @@ function addTask(text) {
         return;
     }
 
-    taskMessage.textContent = ''; // Clear error message
+    taskMessage.textContent = '';
     const taskId = `task-${taskIdCounter++}`;
     const taskItem = createTaskElement(trimmedText, taskId);
 
@@ -63,7 +63,6 @@ function toggleTaskComplete(taskItem) {
     const isCompleted = taskItem.classList.toggle('completed');
     taskItem.dataset.state = isCompleted ? 'completed' : 'pending';
     
-    // Optional UI enhancement: Update complete button label based on state
     const completeBtn = taskItem.querySelector('.complete-btn');
     if (completeBtn) {
         completeBtn.textContent = isCompleted ? 'Undo' : 'Complete';
@@ -103,7 +102,7 @@ function saveTaskEdit(taskItem) {
     taskMessage.textContent = '';
     const span = document.createElement('span');
     span.className = 'task-text';
-    span.textContent = trimmedText; // Safe assignment
+    span.textContent = trimmedText;
 
     input.replaceWith(span);
     editBtn.textContent = 'Edit';
@@ -153,7 +152,7 @@ function handleTaskListClick(event) {
     }
 }
 
-// Load Sample Tasks using DocumentFragment
+// Load Sample Tasks using DocumentFragment for optimized batch insertion
 function loadSampleTasks() {
     const sampleTexts = [
         'Review DOM selectors',
