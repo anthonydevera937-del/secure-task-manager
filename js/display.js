@@ -1,30 +1,20 @@
-/* DISPLAY MODULE: element references and everything that updates what the user sees. */
+/* DISPLAY MODULE: everything that changes what the user sees.
+   The page elements are selected in app.js and passed in as arguments. */
 
-export const elements = {
-  taskInput: document.getElementById("taskInput"),
-  addTaskBtn: document.getElementById("addTaskBtn"),
-  loadSamplesBtn: document.getElementById("loadSamplesBtn"),
-  taskList: document.getElementById("taskList"),
-  taskMessage: document.getElementById("taskMessage"),
-  totalCount: document.getElementById("totalCount"),
-  pendingCount: document.getElementById("pendingCount"),
-  completedCount: document.getElementById("completedCount")
-};
-
-export function showMessage(text) {
-  elements.taskMessage.textContent = text;
+export function showMessage(messageElement, text) {
+  messageElement.textContent = text;
 }
 
-export function clearMessage() {
-  elements.taskMessage.textContent = "";
+export function clearMessage(messageElement) {
+  messageElement.textContent = "";
 }
 
-export function clearInput() {
-  elements.taskInput.value = "";
+export function clearInput(inputElement) {
+  inputElement.value = "";
 }
 
-export function renderCounts({ total, pending, completed }) {
-  elements.totalCount.textContent = total;
-  elements.pendingCount.textContent = pending;
-  elements.completedCount.textContent = completed;
+export function renderCounts(countElements, { total, pending, completed }) {
+  countElements.total.textContent = total;
+  countElements.pending.textContent = pending;
+  countElements.completed.textContent = completed;
 }

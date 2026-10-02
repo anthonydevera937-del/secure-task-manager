@@ -22,10 +22,10 @@ secure-task-manager/
 ├── css/
 │   └── style.css
 └── js/
-    ├── app.js       (main module: required functions and event listeners)
-    ├── data.js      (constants, unique task IDs, count calculation)
+    ├── app.js       (main module: selects the elements, 9 required functions, event listeners)
+    ├── data.js      (sample tasks, unique task IDs, count calculation)
     ├── utils.js     (text helpers)
-    └── display.js   (page elements, messages, and counts display)
+    └── display.js   (shows/clears messages, clears input, shows counts)
 ```
 
 ## How to run

@@ -1,9 +1,20 @@
 /* MAIN MODULE: builds tasks, handles events, and connects the other modules. */
-import { EMPTY_MESSAGE, TASK_STATES, SAMPLE_TASKS, generateTaskId, calculateCounts } from "./data.js";
+import { SAMPLE_TASKS, generateTaskId, calculateCounts } from "./data.js";
 import { normalizeText, isBlank } from "./utils.js";
-import { elements, showMessage, clearMessage, clearInput, renderCounts } from "./display.js";
+import { showMessage, clearMessage, clearInput, renderCounts } from "./display.js";
 
-const { taskInput, addTaskBtn, loadSamplesBtn, taskList } = elements;
+/* ---------- Select and store the page elements ---------- */
+const taskInput = document.getElementById("taskInput");
+const addTaskBtn = document.getElementById("addTaskBtn");
+const loadSamplesBtn = document.getElementById("loadSamplesBtn");
+const taskList = document.getElementById("taskList");
+const taskMessage = document.getElementById("taskMessage");
+const totalCount = document.getElementById("totalCount");
+const pendingCount = document.getElementById("pendingCount");
+const completedCount = document.getElementById("completedCount");
+
+const EMPTY_MESSAGE = "Task cannot be empty";
+const countElements = { total: totalCount, pending: pendingCount, completed: completedCount };
 
 function createTaskId() {
   return generateTaskId((id) => taskList.querySelector(`[data-task-id="${id}"]`) !== null);
@@ -16,7 +27,7 @@ function createTaskElement(taskText, taskId) {
   const taskItem = document.createElement("li");
   taskItem.classList.add("task-item");
   taskItem.dataset.taskId = taskId;
-  taskItem.dataset.state = TASK_STATES.PENDING;
+  taskItem.dataset.state = "pending";
 
   const textSpan = document.createElement("span");
   textSpan.classList.add("task-text");
@@ -41,23 +52,23 @@ function createTaskElement(taskText, taskId) {
   return taskItem;
 }
 
-function addTask(taskText) {
+function addTask(taskText = taskInput.value) {
   if (isBlank(taskText)) {
-    showMessage(EMPTY_MESSAGE);
+    showMessage(taskMessage, EMPTY_MESSAGE);
     return;
   }
 
   const taskItem = createTaskElement(normalizeText(taskText), createTaskId());
   taskList.appendChild(taskItem);
 
-  clearInput();
-  clearMessage();
+  clearInput(taskInput);
+  clearMessage(taskMessage);
   updateTaskCounts();
 }
 
 function toggleTaskComplete(taskItem) {
   const isCompleted = taskItem.classList.toggle("completed");
-  taskItem.dataset.state = isCompleted ? TASK_STATES.COMPLETED : TASK_STATES.PENDING;
+  taskItem.dataset.state = isCompleted ? "completed" : "pending";
   updateTaskCounts();
 }
 
@@ -86,7 +97,7 @@ function saveTaskEdit(taskItem) {
   }
 
   if (isBlank(editInput.value)) {
-    showMessage(EMPTY_MESSAGE);
+    showMessage(taskMessage, EMPTY_MESSAGE);
     return;
   }
 
@@ -96,7 +107,7 @@ function saveTaskEdit(taskItem) {
 
   taskItem.replaceChild(textSpan, editInput);
   editButton.textContent = "Edit";
-  clearMessage();
+  clearMessage(taskMessage);
 }
 
 function removeTask(taskItem) {
@@ -109,27 +120,26 @@ function updateTaskCounts() {
   const states = Array.from(taskList.querySelectorAll(".task-item")).map(
     (taskItem) => taskItem.dataset.state
   );
-  renderCounts(calculateCounts(states));
+  renderCounts(countElements, calculateCounts(states));
 }
 
 // The single delegated click handler attached to #taskList.
 function handleTaskListClick(event) {
-  const target = event.target;
-  const taskItem = target.closest(".task-item");
+  const taskItem = event.target.closest(".task-item");
 
   if (!taskItem || !taskList.contains(taskItem)) {
     return;
   }
 
-  if (target.matches(".complete-btn")) {
+  if (event.target.matches(".complete-btn")) {
     toggleTaskComplete(taskItem);
-  } else if (target.matches(".edit-btn")) {
+  } else if (event.target.matches(".edit-btn")) {
     if (taskItem.querySelector(".edit-input")) {
       saveTaskEdit(taskItem);
     } else {
       beginTaskEdit(taskItem);
     }
-  } else if (target.matches(".remove-btn")) {
+  } else if (event.target.matches(".remove-btn")) {
     removeTask(taskItem);
   }
 }
@@ -142,7 +152,7 @@ function loadSampleTasks() {
   });
 
   taskList.appendChild(fragment); // appended to the live DOM only once
-  clearMessage();
+  clearMessage(taskMessage);
   updateTaskCounts();
 }
 

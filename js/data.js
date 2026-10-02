@@ -1,11 +1,4 @@
-/* DATA MODULE: constants, task state, ID generation, and count calculation. */
-
-export const EMPTY_MESSAGE = "Task cannot be empty";
-
-export const TASK_STATES = {
-  PENDING: "pending",
-  COMPLETED: "completed"
-};
+/* DATA MODULE: sample task data, unique ID generation, and count calculation. */
 
 export const SAMPLE_TASKS = [
   "Review DOM selectors",
@@ -27,7 +20,7 @@ export function generateTaskId(isTaken = () => false) {
 
 // Calculates the counts from a list of data-state values (never hard-coded).
 export function calculateCounts(states) {
-  const pending = states.filter((state) => state === TASK_STATES.PENDING).length;
-  const completed = states.filter((state) => state === TASK_STATES.COMPLETED).length;
+  const pending = states.filter((state) => state === "pending").length;
+  const completed = states.filter((state) => state === "completed").length;
   return { total: states.length, pending, completed };
 }
