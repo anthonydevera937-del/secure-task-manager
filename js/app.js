@@ -1,4 +1,4 @@
-// DOM Element Selectors
+// Kunin ang mga elemento mula sa HTML gamit ang kanilang ID
 const taskInput = document.getElementById('taskInput');
 const addTaskBtn = document.getElementById('addTaskBtn');
 const loadSamplesBtn = document.getElementById('loadSamplesBtn');
@@ -10,7 +10,7 @@ const completedCount = document.getElementById('completedCount');
 
 let taskIdCounter = 1;
 
-// Helper: Create a single task element securely using createElement and textContent
+// Function para gumawa ng task element gamit ang createElement at textContent para ligtas sa XSS
 function createTaskElement(taskText, taskId) {
     const li = document.createElement('li');
     li.className = 'task-item';
@@ -19,7 +19,7 @@ function createTaskElement(taskText, taskId) {
 
     const span = document.createElement('span');
     span.className = 'task-text';
-    span.textContent = taskText; // Prevents XSS
+    span.textContent = taskText; // Pinipigilan ang XSS attacks
 
     const completeBtn = document.createElement('button');
     completeBtn.className = 'complete-btn';
@@ -33,6 +33,7 @@ function createTaskElement(taskText, taskId) {
     removeBtn.className = 'remove-btn';
     removeBtn.textContent = 'Remove';
 
+    // Pagdugtong-dugtungin ang mga elemento sa loob ng li
     li.appendChild(span);
     li.appendChild(completeBtn);
     li.appendChild(editBtn);
@@ -41,7 +42,7 @@ function createTaskElement(taskText, taskId) {
     return li;
 }
 
-// Add a new task from input with whitespace validation
+// Function para magdagdag ng bagong task na may validation sa blank input
 function addTask(text) {
     const trimmedText = text.trim();
     if (!trimmedText) {
@@ -58,7 +59,7 @@ function addTask(text) {
     updateTaskCounts();
 }
 
-// Toggle task completed state
+// Function para i-toggle ang estado ng task kung tapos na o hindi pa
 function toggleTaskComplete(taskItem) {
     const isCompleted = taskItem.classList.toggle('completed');
     taskItem.dataset.state = isCompleted ? 'completed' : 'pending';
@@ -71,7 +72,7 @@ function toggleTaskComplete(taskItem) {
     updateTaskCounts();
 }
 
-// Begin editing task text
+// Function para simulan ang pag-edit ng task
 function beginTaskEdit(taskItem) {
     const span = taskItem.querySelector('.task-text');
     const editBtn = taskItem.querySelector('.edit-btn');
@@ -87,7 +88,7 @@ function beginTaskEdit(taskItem) {
     editBtn.textContent = 'Save';
 }
 
-// Save edited task text with validation
+// Function para i-save ang binagong task na may validation
 function saveTaskEdit(taskItem) {
     const input = taskItem.querySelector('.edit-input');
     const editBtn = taskItem.querySelector('.edit-btn');
@@ -108,13 +109,13 @@ function saveTaskEdit(taskItem) {
     editBtn.textContent = 'Edit';
 }
 
-// Remove task from DOM
+// Function para mag-delete ng task
 function removeTask(taskItem) {
     taskItem.remove();
     updateTaskCounts();
 }
 
-// Update counts dynamically based on DOM states
+// Function para i-update ang mga counter sa summary section
 function updateTaskCounts() {
     const tasks = taskList.querySelectorAll('.task-item');
     let total = tasks.length;
@@ -133,7 +134,7 @@ function updateTaskCounts() {
     completedCount.textContent = completed;
 }
 
-// Event Delegation for Task List Actions
+// Event Delegation para sa mga pindutan sa task list
 function handleTaskListClick(event) {
     const target = event.target;
     const taskItem = target.closest('.task-item');
@@ -152,7 +153,7 @@ function handleTaskListClick(event) {
     }
 }
 
-// Load Sample Tasks using DocumentFragment for performance optimization
+// Function para mag-load ng sample tasks gamit ang DocumentFragment para sa performance
 function loadSampleTasks() {
     const sampleTexts = [
         'Review DOM selectors',
@@ -172,7 +173,7 @@ function loadSampleTasks() {
     updateTaskCounts();
 }
 
-// Event Listeners Setup
+// Pagkabit ng mga Event Listeners sa mga main buttons at inputs
 addTaskBtn.addEventListener('click', () => {
     addTask(taskInput.value);
 });
@@ -187,8 +188,8 @@ loadSamplesBtn.addEventListener('click', () => {
     loadSampleTasks();
 });
 
-// Single delegated click listener on #taskList
+// Isang delegated listener para sa buong taskList
 taskList.addEventListener('click', handleTaskListClick);
 
-// Initialize counts on load
+// Paunang tawag sa count updater pag-load ng pahina
 updateTaskCounts();
