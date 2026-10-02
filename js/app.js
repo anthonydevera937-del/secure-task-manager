@@ -10,7 +10,7 @@ const completedCount = document.getElementById('completedCount');
 
 let taskIdCounter = 1;
 
-// Helper: Create a single task element
+// Helper: Create a single task element securely using createElement and textContent
 function createTaskElement(taskText, taskId) {
     const li = document.createElement('li');
     li.className = 'task-item';
@@ -19,7 +19,7 @@ function createTaskElement(taskText, taskId) {
 
     const span = document.createElement('span');
     span.className = 'task-text';
-    span.textContent = taskText; // Safe DOM API to prevent injection
+    span.textContent = taskText; // Prevents XSS
 
     const completeBtn = document.createElement('button');
     completeBtn.className = 'complete-btn';
@@ -41,7 +41,7 @@ function createTaskElement(taskText, taskId) {
     return li;
 }
 
-// Add a new task from input
+// Add a new task from input with whitespace validation
 function addTask(text) {
     const trimmedText = text.trim();
     if (!trimmedText) {
@@ -87,7 +87,7 @@ function beginTaskEdit(taskItem) {
     editBtn.textContent = 'Save';
 }
 
-// Save edited task text
+// Save edited task text with validation
 function saveTaskEdit(taskItem) {
     const input = taskItem.querySelector('.edit-input');
     const editBtn = taskItem.querySelector('.edit-btn');
@@ -114,7 +114,7 @@ function removeTask(taskItem) {
     updateTaskCounts();
 }
 
-// Update counts dynamically from DOM elements and dataset states
+// Update counts dynamically based on DOM states
 function updateTaskCounts() {
     const tasks = taskList.querySelectorAll('.task-item');
     let total = tasks.length;
@@ -152,7 +152,7 @@ function handleTaskListClick(event) {
     }
 }
 
-// Load Sample Tasks using DocumentFragment for optimized batch insertion
+// Load Sample Tasks using DocumentFragment for performance optimization
 function loadSampleTasks() {
     const sampleTexts = [
         'Review DOM selectors',
